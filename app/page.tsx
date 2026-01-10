@@ -31,8 +31,33 @@ export interface Chat {
 }
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      role: 'user',
+      content: 'Hi',
+      timestamp: new Date(),
+    },
+    {
+      id: '2',
+      role: 'assistant',
+      content: 'Hi 💙 I\'m glad you\'re here. How is your mind feeling right now?',
+      timestamp: new Date(),
+    },
+    {
+      id: '3',
+      role: 'user',
+      content: 'what is your name?',
+      timestamp: new Date(),
+    },
+    {
+      id: '4',
+      role: 'assistant',
+      content: 'My name is Buddy 😊 I\'m here to support you and listen whenever you need.',
+      timestamp: new Date(),
+    },
+  ]);
+  const [avatarUrl, setAvatarUrl] = useState<string>('/avatar.glb');
   const [isAvatarCreatorOpen, setIsAvatarCreatorOpen] = useState(false);
 
   const handleSendMessage = (content: string) => {
@@ -47,12 +72,24 @@ export default function Home() {
 
     setMessages((prev) => [...prev, userMessage]);
 
-    // Simulate AI response
+    // Simulate AI response based on user input
     setTimeout(() => {
+      let responseContent = 'I\'m here to listen and support you. What\'s on your mind? 💙';
+      
+      // Simple response logic
+      const lowerContent = content.toLowerCase();
+      if (lowerContent.includes('hi') || lowerContent.includes('hello')) {
+        responseContent = 'Hi 💙 I\'m glad you\'re here. How is your mind feeling right now?';
+      } else if (lowerContent.includes('name')) {
+        responseContent = 'My name is Buddy 😊 I\'m here to support you and listen whenever you need.';
+      } else if (lowerContent.includes('how are you')) {
+        responseContent = 'I\'m doing well, thank you for asking! 😊 More importantly, how are you feeling today?';
+      }
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I\'m Buddy, your AI assistant. I can help you with various tasks including coding, writing, analysis, and answering questions. How can I assist you today?',
+        content: responseContent,
         timestamp: new Date(),
       };
 

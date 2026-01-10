@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useRef, ErrorInfo, Component } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -10,22 +10,15 @@ interface AvatarModelProps {
 }
 
 function AvatarModel({ url }: AvatarModelProps) {
+  const group = useRef<THREE.Group>(null);
   const { scene } = useGLTF(url);
-  const meshRef = useRef<THREE.Group>(null);
-
-  // Gentle rotation animation
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
-    }
-  });
 
   return (
     <primitive
-      ref={meshRef}
+      ref={group}
       object={scene}
-      scale={[1, 1, 1]}
-      position={[0, -1.5, 0]}
+      scale={[1.8, 1.8, 1.8]}
+      position={[0, -1.8, 0]}
     />
   );
 }
@@ -82,28 +75,36 @@ export function Avatar3D({ avatarUrl }: Avatar3DProps) {
 
   return (
     <AvatarErrorBoundary fallback={<LoadingAvatar />}>
-      <div className="w-full h-full">
-        <Canvas
-          camera={{ position: [0, 0, 3], fov: 50 }}
-          gl={{ antialias: true, alpha: true }}
-          style={{ background: 'transparent' }}
-        >
-          <Suspense fallback={<LoadingAvatar />}>
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[5, 5, 5]} intensity={1} />
-            <pointLight position={[-5, -5, -5]} intensity={0.5} />
-            <AvatarModel url={avatarUrl} />
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              minPolarAngle={Math.PI / 3}
-              maxPolarAngle={Math.PI / 1.5}
-              autoRotate
-              autoRotateSpeed={0.5}
-            />
-            <Environment preset="sunset" />
-          </Suspense>
-        </Canvas>
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="w-full h-full max-w-3xl">
+          <Canvas
+            camera={{ position: [0, 0.3, 4.5], fov: 50 }}
+            gl={{ 
+              antialias: true, 
+              alpha: true,
+              pixelRatio: Math.min(window.devicePixelRatio, 2)
+            }}
+            style={{ background: 'transparent' }}
+            dpr={[1, 2]}
+          >
+            <Suspense fallback={null}>
+              <ambientLight intensity={0.7} />
+              <directionalLight position={[5, 5, 5]} intensity={1.5} />
+              <directionalLight position={[-5, 3, -5]} intensity={0.5} />
+              <spotLight position={[0, 5, 0]} intensity={0.5} angle={0.6} penumbra={1} />
+              <pointLight position={[0, 1, 2]} intensity={0.3} />
+              <AvatarModel url={avatarUrl} />
+              <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                minPolarAngle={Math.PI / 2.5}
+                maxPolarAngle={Math.PI / 1.8}
+                target={[0, 0.2, 0]}
+              />
+              <Environment preset="sunset" />
+            </Suspense>
+          </Canvas>
+        </div>
       </div>
     </AvatarErrorBoundary>
   );
