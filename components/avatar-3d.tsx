@@ -81,8 +81,7 @@ export function Avatar3D({ avatarUrl }: Avatar3DProps) {
             camera={{ position: [0, 0.3, 4.5], fov: 50 }}
             gl={{ 
               antialias: true, 
-              alpha: true,
-              pixelRatio: Math.min(window.devicePixelRatio, 2)
+              alpha: true
             }}
             style={{ background: 'transparent' }}
             dpr={[1, 2]}
